@@ -73,6 +73,15 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "backend-artifact/*"
           target: ${{ secrets.TARGET_DIR }}
+      - name: List files in target dir
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            ls -l ${{ secrets.TARGET_DIR }}
+            ls -l ${{ secrets.TARGET_DIR }}/dist
       - name: Restart backend service on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:

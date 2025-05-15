@@ -225,3 +225,8 @@ err: bash: line 9: pm2: command not found
 # Update Workflow to Copy All Backend Files to EC2
 
 yes, uodate the workflow and the prompts
+
+---
+# Add Debug Step to List Files on EC2
+
+go
