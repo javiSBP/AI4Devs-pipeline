@@ -611,3 +611,8 @@ out: }
 err: nginx: [emerg] could not build server_names_hash, you should increase server_names_hash_bucket_size: 64
 err: nginx: configuration file /etc/nginx/nginx.conf test failed
 2025/05/15 23:41:30 Process exited with status 1
+
+---
+# Fix Port Mismatch Between Backend and Nginx Configuration
+
+the workflow is running but I am getting a 502 Bad Gateway error when accesing the ec2 instance url. Check if port in @index.ts is matching the pipeline config.
