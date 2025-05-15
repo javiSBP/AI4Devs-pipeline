@@ -106,7 +106,7 @@ jobs:
             cd ${{ secrets.TARGET_DIR }}/backend-artifact
             npm install --production
             pm2 restart all || pm2 start dist/index.js --name backend
-      - name: Install Nginx and Certbot, Generate SSL Certificate
+      - name: Install and Configure Nginx for HTTP
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST_DNS }}
@@ -116,23 +116,43 @@ jobs:
             if [ -f /etc/debian_version ]; then
               # Debian/Ubuntu
               sudo apt-get update
-              sudo apt-get install -y nginx certbot python3-certbot-nginx
+              sudo apt-get install -y nginx
               sudo systemctl enable nginx
               sudo systemctl start nginx
-              sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ${{ secrets.HOST_DNS }}
             elif [ -f /etc/redhat-release ] || [ -f /etc/system-release ]; then
               # Amazon Linux/RedHat/CentOS
               sudo yum update -y
               sudo yum install -y nginx
-
-              # EPEL repository for Certbot
-              sudo yum install -y epel-release
-              sudo yum -y install certbot python3-certbot-nginx
-
               sudo systemctl enable nginx
               sudo systemctl start nginx
-              sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ${{ secrets.HOST_DNS }}
             else
-              echo "Unsupported OS. Please install Nginx and Certbot manually."
+              echo "Unsupported OS. Please install Nginx manually."
               exit 1
             fi
+            
+            # Create Nginx configuration for HTTP
+            cat << 'EOF' | sudo tee /etc/nginx/conf.d/backend.conf
+            server {
+              listen 80;
+              server_name ${{ secrets.HOST_DNS }};
+              
+              location / {
+                proxy_pass http://localhost:3000;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+              }
+            }
+            EOF
+            
+            # Remove default config if needed
+            if [ -f /etc/nginx/sites-enabled/default ]; then
+              sudo rm /etc/nginx/sites-enabled/default
+            fi
+            
+            # Test and reload Nginx configuration
+            sudo nginx -t && sudo systemctl reload nginx
+      - name: Output Public URL
+        run: echo "Your backend is accessible at http://${{ secrets.HOST_DNS }}"
