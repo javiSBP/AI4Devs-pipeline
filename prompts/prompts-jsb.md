@@ -220,3 +220,8 @@ err: bash: line 8: npm: command not found
 err: bash: line 9: pm2: command not found
 err: bash: line 9: pm2: command not found
 2025/05/15 23:04:49 Process exited with status 127
+
+---
+# Update Workflow to Copy All Backend Files to EC2
+
+yes, uodate the workflow and the prompts
