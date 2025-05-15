@@ -534,3 +534,80 @@ err: Ask for help or search for solutions at https://community.letsencrypt.org. 
 # Configure Nginx for HTTP Without HTTPS
 
 ok lets configure nginx without https and I will open the 80 port in EC2 for HTTP
+
+---
+# Fix Nginx Hash Bucket Size Error
+
+now the error is:
+
+Run appleboy/ssh-action@v1.0.3
+/usr/bin/docker run --name b20e2a8c610eb6046d18594c718e97ee6ff_4e592b --label 899b20 --workdir /github/workspace --rm -e "INPUT_HOST" -e "INPUT_USERNAME" -e "INPUT_KEY" -e "INPUT_SCRIPT" -e "INPUT_PORT" -e "INPUT_PASSPHRASE" -e "INPUT_PASSWORD" -e "INPUT_SYNC" -e "INPUT_USE_INSECURE_CIPHER" -e "INPUT_CIPHER" -e "INPUT_TIMEOUT" -e "INPUT_COMMAND_TIMEOUT" -e "INPUT_KEY_PATH" -e "INPUT_FINGERPRINT" -e "INPUT_PROXY_HOST" -e "INPUT_PROXY_PORT" -e "INPUT_PROXY_USERNAME" -e "INPUT_PROXY_PASSWORD" -e "INPUT_PROXY_PASSPHRASE" -e "INPUT_PROXY_TIMEOUT" -e "INPUT_PROXY_KEY" -e "INPUT_PROXY_KEY_PATH" -e "INPUT_PROXY_FINGERPRINT" -e "INPUT_PROXY_CIPHER" -e "INPUT_PROXY_USE_INSECURE_CIPHER" -e "INPUT_SCRIPT_STOP" -e "INPUT_ENVS" -e "INPUT_ENVS_FORMAT" -e "INPUT_DEBUG" -e "INPUT_ALLENVS" -e "INPUT_REQUEST_PTY" -e "HOME" -e "GITHUB_JOB" -e "GITHUB_REF" -e "GITHUB_SHA" -e "GITHUB_REPOSITORY" -e "GITHUB_REPOSITORY_OWNER" -e "GITHUB_REPOSITORY_OWNER_ID" -e "GITHUB_RUN_ID" -e "GITHUB_RUN_NUMBER" -e "GITHUB_RETENTION_DAYS" -e "GITHUB_RUN_ATTEMPT" -e "GITHUB_ACTOR_ID" -e "GITHUB_ACTOR" -e "GITHUB_WORKFLOW" -e "GITHUB_HEAD_REF" -e "GITHUB_BASE_REF" -e "GITHUB_EVENT_NAME" -e "GITHUB_SERVER_URL" -e "GITHUB_API_URL" -e "GITHUB_GRAPHQL_URL" -e "GITHUB_REF_NAME" -e "GITHUB_REF_PROTECTED" -e "GITHUB_REF_TYPE" -e "GITHUB_WORKFLOW_REF" -e "GITHUB_WORKFLOW_SHA" -e "GITHUB_REPOSITORY_ID" -e "GITHUB_TRIGGERING_ACTOR" -e "GITHUB_WORKSPACE" -e "GITHUB_ACTION" -e "GITHUB_EVENT_PATH" -e "GITHUB_ACTION_REPOSITORY" -e "GITHUB_ACTION_REF" -e "GITHUB_PATH" -e "GITHUB_ENV" -e "GITHUB_STEP_SUMMARY" -e "GITHUB_STATE" -e "GITHUB_OUTPUT" -e "RUNNER_OS" -e "RUNNER_ARCH" -e "RUNNER_NAME" -e "RUNNER_ENVIRONMENT" -e "RUNNER_TOOL_CACHE" -e "RUNNER_TEMP" -e "RUNNER_WORKSPACE" -e "ACTIONS_RUNTIME_URL" -e "ACTIONS_RUNTIME_TOKEN" -e "ACTIONS_CACHE_URL" -e "ACTIONS_RESULTS_URL" -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" -v "/home/runner/work/AI4Devs-pipeline/AI4Devs-pipeline":"/github/workspace" 899b20:e2a8c610eb6046d18594c718e97ee6ff
+======CMD======
+if [ -f /etc/debian_version ]; then
+  # Debian/Ubuntu
+  sudo apt-get update
+  sudo apt-get install -y nginx
+  sudo systemctl enable nginx
+  sudo systemctl start nginx
+elif [ -f /etc/redhat-release ] || [ -f /etc/system-release ]; then
+  # Amazon Linux/RedHat/CentOS
+  sudo yum update -y
+  sudo yum install -y nginx
+  sudo systemctl enable nginx
+  sudo systemctl start nginx
+else
+  echo "Unsupported OS. Please install Nginx manually."
+  exit 1
+fi
+
+# Create Nginx configuration for HTTP
+cat << 'EOF' | sudo tee /etc/nginx/conf.d/backend.conf
+server {
+  listen 80;
+  server_name ***;
+  
+  location / {
+    proxy_pass http://localhost:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+  }
+}
+EOF
+
+# Remove default config if needed
+if [ -f /etc/nginx/sites-enabled/default ]; then
+  sudo rm /etc/nginx/sites-enabled/default
+fi
+
+# Test and reload Nginx configuration
+sudo nginx -t && sudo systemctl reload nginx
+
+======END======
+out: Last metadata expiration check: 0:25:29 ago on Thu May 15 23:15:58 2025.
+out: Dependencies resolved.
+out: Nothing to do.
+out: Complete!
+out: Last metadata expiration check: 0:25:31 ago on Thu May 15 23:15:58 2025.
+out: Package nginx-1:1.26.3-1.amzn2023.0.1.x86_64 is already installed.
+out: Dependencies resolved.
+out: Nothing to do.
+out: Complete!
+out: server {
+out:   listen 80;
+out:   server_name ***;
+out:   
+out:   location / {
+out:     proxy_pass http://localhost:3000;
+out:     proxy_http_version 1.1;
+out:     proxy_set_header Upgrade $http_upgrade;
+out:     proxy_set_header Connection 'upgrade';
+out:     proxy_set_header Host $host;
+out:     proxy_cache_bypass $http_upgrade;
+out:   }
+out: }
+err: nginx: [emerg] could not build server_names_hash, you should increase server_names_hash_bucket_size: 64
+err: nginx: configuration file /etc/nginx/nginx.conf test failed
+2025/05/15 23:41:30 Process exited with status 1

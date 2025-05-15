@@ -130,6 +130,12 @@ jobs:
               exit 1
             fi
             
+            # Increase server_names_hash_bucket_size to handle long domain names
+            sudo bash -c 'cat << EOF > /etc/nginx/conf.d/server_names_hash.conf
+            # Increase hash bucket size to handle long domain names
+            server_names_hash_bucket_size 128;
+            EOF'
+            
             # Create Nginx configuration for HTTP
             cat << 'EOF' | sudo tee /etc/nginx/conf.d/backend.conf
             server {
