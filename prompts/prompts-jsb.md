@@ -39,3 +39,8 @@ Finally, configure the workflow to deploy the built backend code to an EC2 insta
 - HOST_DNS: public host of the instance
 - USERNAME: the username of the EC2 instance
 - TARGET_DIR: the deployment directory 
+
+---
+# Reuse Build Artifact in Deploy Job
+
+Reuse the built code from "build-backend" job in the "deploy-backend" one 

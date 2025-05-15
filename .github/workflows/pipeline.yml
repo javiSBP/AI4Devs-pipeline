@@ -42,6 +42,11 @@ jobs:
         run: npm install
       - name: Build backend
         run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dist
+          path: backend/dist
 
   deploy-backend:
     name: Deploy Backend to EC2
@@ -51,16 +56,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20
-      - name: Install dependencies
-        run: npm install
-        working-directory: backend
-      - name: Build backend
-        run: npm run build
-        working-directory: backend
+          name: backend-dist
+          path: backend/dist
       - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
