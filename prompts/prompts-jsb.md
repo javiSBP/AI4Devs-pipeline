@@ -104,3 +104,13 @@ remember the prompts please
 # Save the Prompt Instruction
 
 save the prompt 
+
+---
+# Still Having YAML Syntax Issue
+
+still having the issue:
+
+Invalid workflow file: .github/workflows/pipeline.yml#L97
+You have an error in your yaml syntax on line 97
+
+remember to save the prompt 
