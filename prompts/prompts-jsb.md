@@ -79,3 +79,18 @@ Is this output still correct? have ports been mapped?
 # Confirm Update Output Public URL
 
 yes 
+
+---
+# Reminder: Always Save Prompts to prompts-jsb.md
+
+always remember to add the prompts to @prompts-jsb.md using @save-prompts.mdc . It's important! do not forget about it! 
+
+---
+# Analyze Workflow Failure Risks
+
+do you think the workflow is going to work? analyze the failure risks
+
+---
+# Test Workflow on Commit Instead of PR
+
+let's test the workflow, change the condition to a commit instead of a pull request 
