@@ -78,8 +78,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             export PATH=$PATH:/usr/local/bin:/usr/bin:/bin
-            cd ${{ secrets.TARGET_DIR }}
+            if ! command -v npm &> /dev/null; then
+              curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+              sudo apt-get install -y nodejs
+            fi
             sudo npm install -g pm2
+            cd ${{ secrets.TARGET_DIR }}
             npm install --production
             pm2 restart all || pm2 start dist/index.js --name backend
       - name: Install Nginx and Certbot, Generate SSL Certificate
