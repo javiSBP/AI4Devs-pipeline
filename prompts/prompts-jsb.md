@@ -114,3 +114,26 @@ Invalid workflow file: .github/workflows/pipeline.yml#L97
 You have an error in your yaml syntax on line 97
 
 remember to save the prompt 
+
+---
+# Build Backend Errors: Prisma and TypeScript
+
+now I have errors when building the backend:
+
+Build Backend
+Process completed with exit code 2.
+Build Backend
+Property 'PrismaClientInitializationError' does not exist on type 'typeof Prisma'.
+Build Backend
+Property 'PrismaClientInitializationError' does not exist on type 'typeof Prisma'.
+Build Backend
+Parameter 'step' implicitly has an 'any' type.
+Build Backend
+Parameter 'app' implicitly has an 'any' type.
+
+remember the @save-prompts.mdc 
+
+---
+# How to Ensure Prompts Are Always Saved
+
+include the lates prompt, how can I do it so you don't forget everytime? 
