@@ -30,3 +30,12 @@ the pipeline will need to install the backend devDependencies in @package.json t
 # Add Backend Build Job to Pipeline
 
 the next step is to build the backend code so it can be deployed to the AWS EC2 instance but just add the build step this time 
+
+---
+# Configure Workflow to Deploy Backend to EC2
+
+Finally, configure the workflow to deploy the built backend code to an EC2 instance using the following repository secrets:
+- EC2_SSH_KEY: the pem certificate for the instance
+- HOST_DNS: public host of the instance
+- USERNAME: the username of the EC2 instance
+- TARGET_DIR: the deployment directory 
