@@ -79,4 +79,18 @@ jobs:
             cd ${{ secrets.TARGET_DIR }}
             npm install --production
             pm2 restart all || pm2 start dist/index.js --name backend
+      - name: Install Nginx and Certbot, Generate SSL Certificate
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo apt-get update
+            sudo apt-get install -y nginx certbot python3-certbot-nginx
+            sudo systemctl enable nginx
+            sudo systemctl start nginx
+            sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ${{ secrets.HOST_DNS }}
+      - name: Output public URL
+        run: echo "Backend deployed! Public URL: https://${{ secrets.HOST_DNS }}"
   # Jobs will be added in the next steps 

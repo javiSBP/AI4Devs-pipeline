@@ -44,3 +44,38 @@ Finally, configure the workflow to deploy the built backend code to an EC2 insta
 # Reuse Build Artifact in Deploy Job
 
 Reuse the built code from "build-backend" job in the "deploy-backend" one 
+
+---
+# Output Public URL After Deployment
+
+Output the public URL once the code has been deployed
+
+---
+# Configure Nginx Reverse Proxy for HTTPS
+
+I have only enabled HTTPS port on my EC2 instance, can you configure an nginx reverse proxy to properly map the ports?
+
+---
+# Can Nginx Be Configured in Workflow?
+
+I mean if it can be configured inside the workflow
+
+---
+# Can Workflow Create SSL Certificates?
+
+can the workflow create the certificates if they are not already there? 
+
+---
+# Use HOST_DNS for Certbot and Set Email
+
+your_domain.com is in the secret HOST_DNS since I do not expect a domain different from the AWS EC2 DNS. For email, you can use javier.sanz@cose.seat
+
+---
+# Is Output Public URL Still Correct?
+
+Is this output still correct? have ports been mapped?
+
+---
+# Confirm Update Output Public URL
+
+yes 
