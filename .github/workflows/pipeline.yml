@@ -113,8 +113,26 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo apt-get update
-            sudo apt-get install -y nginx certbot python3-certbot-nginx
-            sudo systemctl enable nginx
-            sudo systemctl start nginx
-            sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ${{ secrets.HOST_DNS }}
+            if [ -f /etc/debian_version ]; then
+              # Debian/Ubuntu
+              sudo apt-get update
+              sudo apt-get install -y nginx certbot python3-certbot-nginx
+              sudo systemctl enable nginx
+              sudo systemctl start nginx
+              sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ${{ secrets.HOST_DNS }}
+            elif [ -f /etc/redhat-release ] || [ -f /etc/system-release ]; then
+              # Amazon Linux/RedHat/CentOS
+              sudo yum update -y
+              sudo yum install -y nginx
+
+              # EPEL repository for Certbot
+              sudo yum install -y epel-release
+              sudo yum -y install certbot python3-certbot-nginx
+
+              sudo systemctl enable nginx
+              sudo systemctl start nginx
+              sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ${{ secrets.HOST_DNS }}
+            else
+              echo "Unsupported OS. Please install Nginx and Certbot manually."
+              exit 1
+            fi
