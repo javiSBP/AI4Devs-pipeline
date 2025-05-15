@@ -19,3 +19,9 @@ Apply the rule now starting from my first prompt.
 # Create Initial GitHub Actions Workflow File
 
 now create the file .github/workflows/pipeline.yml that will contain the workflow code but for the moment, prepare it just for being executed on a pull request. 
+
+---
+# Add Backend Test Job to Pipeline
+
+cool! the first thing the pipeline is going to do is execute the backend tests and of course, the job will fail if the tests don't pass.
+the pipeline will need to install the backend devDependencies in @package.json to be able to run the tests 
