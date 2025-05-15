@@ -81,7 +81,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             ls -l ${{ secrets.TARGET_DIR }}
-            ls -l ${{ secrets.TARGET_DIR }}/dist
+            ls -l ${{ secrets.TARGET_DIR }}/backend-artifact
+            ls -l ${{ secrets.TARGET_DIR }}/backend-artifact/dist
       - name: Restart backend service on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -102,7 +103,7 @@ jobs:
               fi
             fi
             sudo npm install -g pm2
-            cd ${{ secrets.TARGET_DIR }}
+            cd ${{ secrets.TARGET_DIR }}/backend-artifact
             npm install --production
             pm2 restart all || pm2 start dist/index.js --name backend
       - name: Install Nginx and Certbot, Generate SSL Certificate
