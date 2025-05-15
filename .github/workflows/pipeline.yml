@@ -160,5 +160,43 @@ jobs:
             
             # Test and reload Nginx configuration
             sudo nginx -t && sudo systemctl reload nginx
+      - name: Debug Backend Service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Check if the backend process is running
+            echo "==== PM2 Status ===="
+            pm2 status
+            
+            # Check if port 3010 is being listened to
+            echo "==== Port 3010 Status ===="
+            sudo netstat -tulpn | grep 3010 || echo "Port 3010 is not being listened to"
+            
+            # Check Nginx error logs
+            echo "==== Nginx Error Logs ===="
+            sudo tail -n 50 /var/log/nginx/error.log
+            
+            # Check Nginx access logs
+            echo "==== Nginx Access Logs ===="
+            sudo tail -n 20 /var/log/nginx/access.log
+            
+            # Try to restart the backend service
+            echo "==== Restarting Backend Service ===="
+            cd ${{ secrets.TARGET_DIR }}/backend-artifact
+            ls -la
+            cat package.json
+            ls -la dist/
+            echo "==== Environment Variables ===="
+            grep -v "^\s*#" .env || echo "No .env file found"
+            
+            # Restart PM2 service with explicit path
+            pm2 delete backend || echo "No backend service found to delete"
+            NODE_ENV=production pm2 start dist/index.js --name backend
+            
+            # Check if the service started successfully
+            pm2 status
       - name: Output Public URL
         run: echo "Your backend is accessible at http://${{ secrets.HOST_DNS }}"

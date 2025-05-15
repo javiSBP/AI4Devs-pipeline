@@ -616,3 +616,8 @@ err: nginx: configuration file /etc/nginx/nginx.conf test failed
 # Fix Port Mismatch Between Backend and Nginx Configuration
 
 the workflow is running but I am getting a 502 Bad Gateway error when accesing the ec2 instance url. Check if port in @index.ts is matching the pipeline config.
+
+---
+# Still Having 502 Bad Gateway Issue
+
+still experiencing the bad gateway issue
