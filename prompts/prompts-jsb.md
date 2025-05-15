@@ -94,3 +94,8 @@ do you think the workflow is going to work? analyze the failure risks
 # Test Workflow on Commit Instead of PR
 
 let's test the workflow, change the condition to a commit instead of a pull request 
+
+---
+# Reminder: Remember the Prompts
+
+remember the prompts please 

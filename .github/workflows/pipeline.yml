@@ -1,3 +1,4 @@
+# Jobs will be added in the next steps
 name: Backend CI/CD Pipeline
 
 on:
@@ -93,5 +94,4 @@ jobs:
             sudo systemctl start nginx
             sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ${{ secrets.HOST_DNS }}
       - name: Output public URL
-        run: echo "Backend deployed! Public URL: https://${{ secrets.HOST_DNS }}"
-  # Jobs will be added in the next steps 
+        run: echo "Backend deployed! Public URL: https://${{ secrets.HOST_DNS }}" 
