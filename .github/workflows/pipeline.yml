@@ -93,5 +93,3 @@ jobs:
             sudo systemctl enable nginx
             sudo systemctl start nginx
             sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ${{ secrets.HOST_DNS }}
-      - name: Output public URL
-        run: echo "Backend deployed! Public URL: https://${{ secrets.HOST_DNS }}"
