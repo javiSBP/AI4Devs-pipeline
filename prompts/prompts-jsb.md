@@ -25,3 +25,8 @@ now create the file .github/workflows/pipeline.yml that will contain the workflo
 
 cool! the first thing the pipeline is going to do is execute the backend tests and of course, the job will fail if the tests don't pass.
 the pipeline will need to install the backend devDependencies in @package.json to be able to run the tests 
+
+---
+# Add Backend Build Job to Pipeline
+
+the next step is to build the backend code so it can be deployed to the AWS EC2 instance but just add the build step this time 
