@@ -1,7 +1,7 @@
 name: Backend CI/CD Pipeline
 
 on:
-  push:
+  pull_request:
     paths:
       - 'backend/**'
       - '.github/workflows/pipeline.yml'

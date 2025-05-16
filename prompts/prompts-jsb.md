@@ -165,3 +165,8 @@ drone-scp error: error copy file to dest: ***, error message: dial tcp 16.170.22
 remove all the debug code keeping the @pipeline.yml funcionality 
 
 ---
+# Restore Workflow Trigger to Pull Requests
+
+now restore the github action trigger to be executed on pull requests 
+
+---
