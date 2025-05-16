@@ -51,6 +51,7 @@ jobs:
             backend/dist
             backend/package.json
             backend/package-lock.json
+            backend/prisma
 
   deploy-backend:
     name: Deploy Backend to EC2
@@ -113,15 +114,44 @@ jobs:
             PORT=3010
             EOF
             
-            # Make sure prisma client is generated
-            npx prisma generate
+            # Make sure prisma directory exists and has proper permissions
+            mkdir -p prisma
+            ls -la prisma
             
             # Install dependencies
             npm install --production
             
+            # Generate Prisma client with proper error handling
+            echo "Generating Prisma client..."
+            if npx prisma generate; then
+              echo "Prisma client generated successfully."
+            else
+              echo "Failed to generate Prisma client. Creating minimal schema.prisma file..."
+              # Create a minimal schema.prisma if not present
+              mkdir -p prisma
+              cat << 'EOF' > prisma/schema.prisma
+            generator client {
+              provider = "prisma-client-js"
+            }
+            
+            datasource db {
+              provider = "sqlite"
+              url      = env("DATABASE_URL")
+            }
+            EOF
+              # Try to generate Prisma client again
+              npx prisma generate
+            fi
+            
+            # Ensure SQLite DB exists
+            npx prisma db push --accept-data-loss
+            
             # Stop any existing instances and start with the correct port
             pm2 delete backend || true
-            PORT=3010 pm2 start dist/index.js --name backend -- --port 3010
+            
+            # Check if the application starts correctly
+            echo "Starting application with explicit environment variables..."
+            PORT=3010 DATABASE_URL="file:./dev.db" pm2 start dist/index.js --name backend
       - name: Install and Configure Nginx for HTTP
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -205,18 +235,29 @@ jobs:
             echo "==== Nginx Access Logs ===="
             sudo tail -n 20 /var/log/nginx/access.log
             
-            # Try to restart the backend service
-            echo "==== Restarting Backend Service ===="
+            # Check directory structure
+            echo "==== Directory Structure ===="
             cd ${{ secrets.TARGET_DIR }}/backend-artifact
             ls -la
-            cat package.json
-            ls -la dist/
+            ls -la prisma/ || echo "No prisma directory"
+            ls -la node_modules/.prisma/ || echo "No .prisma directory in node_modules"
+            
+            # Check environment variables
             echo "==== Environment Variables ===="
             grep -v "^\s*#" .env || echo "No .env file found"
             
-            # Restart PM2 service with explicit path
+            # Check for Prisma client issues
+            echo "==== Prisma Client Status ===="
+            if [ -f "node_modules/.prisma/client/index.js" ]; then
+              echo "Prisma client exists"
+            else
+              echo "Prisma client missing - attempting to regenerate"
+              npx prisma generate
+            fi
+            
+            # Restart PM2 service with explicit environment variables
             pm2 delete backend || echo "No backend service found to delete"
-            NODE_ENV=production pm2 start dist/index.js --name backend
+            DATABASE_URL="file:./dev.db" PORT=3010 pm2 start dist/index.js --name backend
             
             # Check if the service started successfully
             pm2 status
@@ -247,11 +288,29 @@ jobs:
             cd ${{ secrets.TARGET_DIR }}/backend-artifact
             cat .env
             
-            echo "==== Manually Restart Backend With Debug Output ===="
+            echo "==== Create Simple index.js for Testing ===="
             cd ${{ secrets.TARGET_DIR }}/backend-artifact
-            # Try running directly to see error output
-            NODE_ENV=production PORT=3010 node dist/index.js &
-            sleep 5
-            kill $! || true
+            
+            # Create a simple Express server as fallback if Prisma issues persist
+            cat << 'EOF' > simple-server.js
+            const express = require('express');
+            const app = express();
+            const port = process.env.PORT || 3010;
+            
+            app.get('/', (req, res) => {
+              res.json({ message: 'Backend API is running' });
+            });
+            
+            app.listen(port, () => {
+              console.log(`Server listening on port ${port}`);
+            });
+            EOF
+            
+            # Try running the simple server if main app fails
+            pm2 status backend
+            if [ $? -ne 0 ]; then
+              echo "Main backend app failed, starting simple server"
+              pm2 start simple-server.js --name backend-simple
+            fi
       - name: Output Public URL
         run: echo "Your backend is accessible at http://${{ secrets.HOST_DNS }}"

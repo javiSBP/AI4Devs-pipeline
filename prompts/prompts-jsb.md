@@ -564,3 +564,189 @@ out: └────┴────────────┴──────
 ==============================================
 ✅ Successfully executed commands to all host.
 ==============================================
+
+---
+# Fix Prisma Initialization Error in Backend Deployment
+
+this is the last error:
+
+/usr/bin/docker run --name ea9cbe35a9dbd14c7490184783bdd105a8_1aa6bb --label 1960ea --workdir /github/workspace --rm -e "INPUT_HOST" -e "INPUT_USERNAME" -e "INPUT_KEY" -e "INPUT_SCRIPT" -e "INPUT_PORT" -e "INPUT_PASSPHRASE" -e "INPUT_PASSWORD" -e "INPUT_SYNC" -e "INPUT_USE_INSECURE_CIPHER" -e "INPUT_CIPHER" -e "INPUT_TIMEOUT" -e "INPUT_COMMAND_TIMEOUT" -e "INPUT_KEY_PATH" -e "INPUT_FINGERPRINT" -e "INPUT_PROXY_HOST" -e "INPUT_PROXY_PORT" -e "INPUT_PROXY_USERNAME" -e "INPUT_PROXY_PASSWORD" -e "INPUT_PROXY_PASSPHRASE" -e "INPUT_PROXY_TIMEOUT" -e "INPUT_PROXY_KEY" -e "INPUT_PROXY_KEY_PATH" -e "INPUT_PROXY_FINGERPRINT" -e "INPUT_PROXY_CIPHER" -e "INPUT_PROXY_USE_INSECURE_CIPHER" -e "INPUT_SCRIPT_STOP" -e "INPUT_ENVS" -e "INPUT_ENVS_FORMAT" -e "INPUT_DEBUG" -e "INPUT_ALLENVS" -e "INPUT_REQUEST_PTY" -e "HOME" -e "GITHUB_JOB" -e "GITHUB_REF" -e "GITHUB_SHA" -e "GITHUB_REPOSITORY" -e "GITHUB_REPOSITORY_OWNER" -e "GITHUB_REPOSITORY_OWNER_ID" -e "GITHUB_RUN_ID" -e "GITHUB_RUN_NUMBER" -e "GITHUB_RETENTION_DAYS" -e "GITHUB_RUN_ATTEMPT" -e "GITHUB_ACTOR_ID" -e "GITHUB_ACTOR" -e "GITHUB_WORKFLOW" -e "GITHUB_HEAD_REF" -e "GITHUB_BASE_REF" -e "GITHUB_EVENT_NAME" -e "GITHUB_SERVER_URL" -e "GITHUB_API_URL" -e "GITHUB_GRAPHQL_URL" -e "GITHUB_REF_NAME" -e "GITHUB_REF_PROTECTED" -e "GITHUB_REF_TYPE" -e "GITHUB_WORKFLOW_REF" -e "GITHUB_WORKFLOW_SHA" -e "GITHUB_REPOSITORY_ID" -e "GITHUB_TRIGGERING_ACTOR" -e "GITHUB_WORKSPACE" -e "GITHUB_ACTION" -e "GITHUB_EVENT_PATH" -e "GITHUB_ACTION_REPOSITORY" -e "GITHUB_ACTION_REF" -e "GITHUB_PATH" -e "GITHUB_ENV" -e "GITHUB_STEP_SUMMARY" -e "GITHUB_STATE" -e "GITHUB_OUTPUT" -e "RUNNER_OS" -e "RUNNER_ARCH" -e "RUNNER_NAME" -e "RUNNER_ENVIRONMENT" -e "RUNNER_TOOL_CACHE" -e "RUNNER_TEMP" -e "RUNNER_WORKSPACE" -e "ACTIONS_RUNTIME_URL" -e "ACTIONS_RUNTIME_TOKEN" -e "ACTIONS_CACHE_URL" -e "ACTIONS_RESULTS_URL" -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" -v "/home/runner/work/AI4Devs-pipeline/AI4Devs-pipeline":"/github/workspace" 1960ea:9cbe35a9dbd14c7490184783bdd105a8
+======CMD======
+echo "==== PM2 Status and Logs ===="
+pm2 status
+pm2 logs --lines 20 || true
+
+echo "==== Check Application Port ===="
+sudo netstat -tulpn | grep 3010 || echo "Port 3010 is still not listening"
+
+echo "==== Check Nginx Configuration ===="
+sudo nginx -t
+
+echo "==== Check Nginx Service Status ===="
+sudo systemctl status nginx --no-pager
+
+echo "==== Test Local Connection to Backend ===="
+curl -v http://localhost:3010/ || echo "Could not connect to backend locally"
+
+echo "==== Check .env File ===="
+cd ***/backend-artifact
+cat .env
+
+echo "==== Manually Restart Backend With Debug Output ===="
+cd ***/backend-artifact
+# Try running directly to see error output
+NODE_ENV=production PORT=3010 node dist/index.js &
+sleep 5
+kill $! || true
+
+======END======
+out: ==== PM2 Status and Logs ====
+out: ┌────┬────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+out: │ id │ name       │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+out: ├────┼────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+out: │ 0  │ backend    │ default     │ 1.0.0   │ fork    │ 35394    │ 0s     │ 9    │ online    │ 0%       │ 39.5mb   │ *** │ disabled │
+out: └────┴────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+out: [TAILING] Tailing last 20 lines for [all] processes (change the value with --lines option)
+out: /home/***/.pm2/pm2.log last 20 lines:
+out: PM2        | 2025-05-16T00:02:52: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:52: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:52: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | 2025-05-16T00:02:52: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:52: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:52: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | 2025-05-16T00:02:52: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:52: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] starting in -fork mode-
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] online
+out: PM2        | 2025-05-16T00:02:53: PM2 log: App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] starting in -fork mode-
+out: PM2        | App [backend:0] online
+out: 0|backend  | Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+out: 0|backend  |     at new PrismaClient (***/backend-artifact/node_modules/.prisma/client/default.js:43:11)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/domain/models/Candidate.js:41:14)
+out: 0|backend  |     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+out: 0|backend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+out: 0|backend  |     at Module.load (node:internal/modules/cjs/loader:1275:32)
+out: 0|backend  |     at Module._load (node:internal/modules/cjs/loader:1096:12)
+out: 0|backend  |     at Module.require (node:internal/modules/cjs/loader:1298:19)
+out: 0|backend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+out: 0|backend  |     at require (node:internal/modules/helpers:182:18)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/application/services/candidateService.js:40:19)
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] starting in -fork mode-
+out: PM2        | App [backend:0] online
+out: 0|backend  | Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+out: 0|backend  |     at new PrismaClient (***/backend-artifact/node_modules/.prisma/client/default.js:43:11)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/domain/models/Candidate.js:41:14)
+out: 0|backend  |     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+out: 0|backend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+out: 0|backend  |     at Module.load (node:internal/modules/cjs/loader:1275:32)
+out: 0|backend  |     at Module._load (node:internal/modules/cjs/loader:1096:12)
+out: 0|backend  |     at Module.require (node:internal/modules/cjs/loader:1298:19)
+out: 0|backend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+out: 0|backend  |     at require (node:internal/modules/helpers:182:18)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/application/services/candidateService.js:40:19)
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] starting in -fork mode-
+out: PM2        | App [backend:0] online
+out: 0|backend  | Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+out: 0|backend  |     at new PrismaClient (***/backend-artifact/node_modules/.prisma/client/default.js:43:11)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/domain/models/Candidate.js:41:14)
+out: 0|backend  |     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+out: 0|backend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+out: 0|backend  |     at Module.load (node:internal/modules/cjs/loader:1275:32)
+out: 0|backend  |     at Module._load (node:internal/modules/cjs/loader:1096:12)
+out: 0|backend  |     at Module.require (node:internal/modules/cjs/loader:1298:19)
+out: 0|backend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+out: 0|backend  |     at require (node:internal/modules/helpers:182:18)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/application/services/candidateService.js:40:19)
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] starting in -fork mode-
+out: PM2        | App [backend:0] online
+out: 0|backend  | Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+out: 0|backend  |     at new PrismaClient (***/backend-artifact/node_modules/.prisma/client/default.js:43:11)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/domain/models/Candidate.js:41:14)
+out: 0|backend  |     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+out: 0|backend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+out: 0|backend  |     at Module.load (node:internal/modules/cjs/loader:1275:32)
+out: 0|backend  |     at Module._load (node:internal/modules/cjs/loader:1096:12)
+out: 0|backend  |     at Module.require (node:internal/modules/cjs/loader:1298:19)
+out: 0|backend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+out: 0|backend  |     at require (node:internal/modules/helpers:182:18)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/application/services/candidateService.js:40:19)
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] starting in -fork mode-
+out: PM2        | App [backend:0] online
+out: 0|backend  | Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+out: 0|backend  |     at new PrismaClient (***/backend-artifact/node_modules/.prisma/client/default.js:43:11)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/domain/models/Candidate.js:41:14)
+out: 0|backend  |     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+out: 0|backend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+out: 0|backend  |     at Module.load (node:internal/modules/cjs/loader:1275:32)
+out: 0|backend  |     at Module._load (node:internal/modules/cjs/loader:1096:12)
+out: 0|backend  |     at Module.require (node:internal/modules/cjs/loader:1298:19)
+out: 0|backend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+out: 0|backend  |     at require (node:internal/modules/helpers:182:18)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/application/services/candidateService.js:40:19)
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] starting in -fork mode-
+out: PM2        | App [backend:0] online
+out: 0|backend  | Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+out: 0|backend  |     at new PrismaClient (***/backend-artifact/node_modules/.prisma/client/default.js:43:11)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/domain/models/Candidate.js:41:14)
+out: 0|backend  |     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+out: 0|backend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+out: 0|backend  |     at Module.load (node:internal/modules/cjs/loader:1275:32)
+out: 0|backend  |     at Module._load (node:internal/modules/cjs/loader:1096:12)
+out: 0|backend  |     at Module.require (node:internal/modules/cjs/loader:1298:19)
+out: 0|backend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+out: 0|backend  |     at require (node:internal/modules/helpers:182:18)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/application/services/candidateService.js:40:19)
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] starting in -fork mode-
+out: PM2        | App [backend:0] online
+out: 0|backend  | Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+out: 0|backend  |     at new PrismaClient (***/backend-artifact/node_modules/.prisma/client/default.js:43:11)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/domain/models/Candidate.js:41:14)
+out: 0|backend  |     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+out: 0|backend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+out: 0|backend  |     at Module.load (node:internal/modules/cjs/loader:1275:32)
+out: 0|backend  |     at Module._load (node:internal/modules/cjs/loader:1096:12)
+out: 0|backend  |     at Module.require (node:internal/modules/cjs/loader:1298:19)
+out: 0|backend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+out: 0|backend  |     at require (node:internal/modules/helpers:182:18)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/application/services/candidateService.js:40:19)
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | App [backend:0] starting in -fork mode-
+out: PM2        | App [backend:0] online
+out: 0|backend  | Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+out: 0|backend  |     at new PrismaClient (***/backend-artifact/node_modules/.prisma/client/default.js:43:11)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/domain/models/Candidate.js:41:14)
+out: 0|backend  |     at Module._compile (node:internal/modules/cjs/loader:1529:14)
+out: 0|backend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+out: 0|backend  |     at Module.load (node:internal/modules/cjs/loader:1275:32)
+out: 0|backend  |     at Module._load (node:internal/modules/cjs/loader:1096:12)
+out: 0|backend  |     at Module.require (node:internal/modules/cjs/loader:1298:19)
+out: 0|backend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+out: 0|backend  |     at require (node:internal/modules/helpers:182:18)
+out: 0|backend  |     at Object.<anonymous> (***/backend-artifact/dist/application/services/candidateService.js:40:19)
+out: PM2        | App [backend:0] exited with code [1] via signal [SIGINT]
+out: PM2        | Script ***/backend-artifact/dist/index.js had too many unstable restarts (16). Stopped. "errored"
+2025/05/16 00:05:53 wait: remote command exited without exit status or exit signal
