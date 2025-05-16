@@ -104,8 +104,24 @@ jobs:
             fi
             sudo npm install -g pm2
             cd ${{ secrets.TARGET_DIR }}/backend-artifact
+            
+            # Create a minimal .env file for Prisma
+            cat << 'EOF' > .env
+            # Database connection
+            DATABASE_URL="file:./dev.db"
+            # Port configuration - force port 3010
+            PORT=3010
+            EOF
+            
+            # Make sure prisma client is generated
+            npx prisma generate
+            
+            # Install dependencies
             npm install --production
-            pm2 restart all || pm2 start dist/index.js --name backend
+            
+            # Stop any existing instances and start with the correct port
+            pm2 delete backend || true
+            PORT=3010 pm2 start dist/index.js --name backend -- --port 3010
       - name: Install and Configure Nginx for HTTP
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -142,6 +158,10 @@ jobs:
               listen 80;
               server_name ${{ secrets.HOST_DNS }};
               
+              # More detailed logging for troubleshooting
+              error_log /var/log/nginx/backend_error.log debug;
+              access_log /var/log/nginx/backend_access.log;
+              
               location / {
                 proxy_pass http://localhost:3010;
                 proxy_http_version 1.1;
@@ -149,6 +169,8 @@ jobs:
                 proxy_set_header Connection 'upgrade';
                 proxy_set_header Host $host;
                 proxy_cache_bypass $http_upgrade;
+                proxy_read_timeout 300s;
+                proxy_connect_timeout 75s;
               }
             }
             EOF
@@ -198,5 +220,38 @@ jobs:
             
             # Check if the service started successfully
             pm2 status
+      - name: Final debugging after setup
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "==== PM2 Status and Logs ===="
+            pm2 status
+            pm2 logs --lines 20 || true
+            
+            echo "==== Check Application Port ===="
+            sudo netstat -tulpn | grep 3010 || echo "Port 3010 is still not listening"
+            
+            echo "==== Check Nginx Configuration ===="
+            sudo nginx -t
+            
+            echo "==== Check Nginx Service Status ===="
+            sudo systemctl status nginx --no-pager
+            
+            echo "==== Test Local Connection to Backend ===="
+            curl -v http://localhost:3010/ || echo "Could not connect to backend locally"
+            
+            echo "==== Check .env File ===="
+            cd ${{ secrets.TARGET_DIR }}/backend-artifact
+            cat .env
+            
+            echo "==== Manually Restart Backend With Debug Output ===="
+            cd ${{ secrets.TARGET_DIR }}/backend-artifact
+            # Try running directly to see error output
+            NODE_ENV=production PORT=3010 node dist/index.js &
+            sleep 5
+            kill $! || true
       - name: Output Public URL
         run: echo "Your backend is accessible at http://${{ secrets.HOST_DNS }}"

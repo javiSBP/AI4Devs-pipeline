@@ -343,7 +343,6 @@ if [ -f /etc/debian_version ]; then
   sudo apt-get install -y nginx certbot python3-certbot-nginx
   sudo systemctl enable nginx
   sudo systemctl start nginx
-  sudo certbot --nginx --non-interactive --agree-tos --redirect -m javier.sanz@cose.seat -d ***
 elif [ -f /etc/redhat-release ] || [ -f /etc/system-release ]; then
   # Amazon Linux/RedHat/CentOS
   sudo yum update -y
@@ -366,231 +365,6 @@ out: Dependencies resolved.
 out: Nothing to do.
 out: Complete!
 out: Last metadata expiration check: 0:19:09 ago on Thu May 15 23:15:58 2025.
-out: Dependencies resolved.
-out: ================================================================================
-out:  Package               Arch     Version                     Repository     Size
-out: ================================================================================
-out: Installing:
-out:  nginx                 x86_64   1:1.26.3-1.amzn2023.0.1     amazonlinux    33 k
-out: Installing dependencies:
-out:  generic-logos-httpd   noarch   18.0.0-12.amzn2023.0.3      amazonlinux    19 k
-out:  gperftools-libs       x86_64   2.9.1-1.amzn2023.0.3        amazonlinux   308 k
-out:  libunwind             x86_64   1.4.0-5.amzn2023.0.2        amazonlinux    66 k
-out:  nginx-core            x86_64   1:1.26.3-1.amzn2023.0.1     amazonlinux   670 k
-out:  nginx-filesystem      noarch   1:1.26.3-1.amzn2023.0.1     amazonlinux   9.6 k
-out:  nginx-mimetypes       noarch   2.1.49-3.amzn2023.0.3       amazonlinux    21 k
-out: Transaction Summary
-out: ================================================================================
-out: Install  7 Packages
-out: Total download size: 1.1 M
-out: Installed size: 3.6 M
-out: Downloading Packages:
-out: (1/7): generic-logos-httpd-18.0.0-12.amzn2023.0 568 kB/s |  19 kB     00:00    
-out: (2/7): libunwind-1.4.0-5.amzn2023.0.2.x86_64.rp 1.7 MB/s |  66 kB     00:00    
-out: (3/7): nginx-1.26.3-1.amzn2023.0.1.x86_64.rpm   1.5 MB/s |  33 kB     00:00    
-out: (4/7): gperftools-libs-2.9.1-1.amzn2023.0.3.x86 5.0 MB/s | 308 kB     00:00    
-out: (5/7): nginx-mimetypes-2.1.49-3.amzn2023.0.3.no 1.2 MB/s |  21 kB     00:00    
-out: (6/7): nginx-filesystem-1.26.3-1.amzn2023.0.1.n 376 kB/s | 9.6 kB     00:00    
-out: (7/7): nginx-core-1.26.3-1.amzn2023.0.1.x86_64.  12 MB/s | 670 kB     00:00    
-out: --------------------------------------------------------------------------------
-out: Total                                           8.2 MB/s | 1.1 MB     00:00     
-out: Running transaction check
-out: Transaction check succeeded.
-out: Running transaction test
-out: Transaction test succeeded.
-out: Running transaction
-out:   Preparing        :                                                        1/1 
-out:   Running scriptlet: nginx-filesystem-1:1.26.3-1.amzn2023.0.1.noarch        1/7 
-out:   Installing       : nginx-filesystem-1:1.26.3-1.amzn2023.0.1.noarch        1/7 
-out:   Installing       : nginx-mimetypes-2.1.49-3.amzn2023.0.3.noarch           2/7 
-out:   Installing       : libunwind-1.4.0-5.amzn2023.0.2.x86_64                  3/7 
-out:   Installing       : gperftools-libs-2.9.1-1.amzn2023.0.3.x86_64            4/7 
-out:   Installing       : nginx-core-1:1.26.3-1.amzn2023.0.1.x86_64              5/7 
-out:   Installing       : generic-logos-httpd-18.0.0-12.amzn2023.0.3.noarch      6/7 
-out:   Installing       : nginx-1:1.26.3-1.amzn2023.0.1.x86_64                   7/7 
-out:   Running scriptlet: nginx-1:1.26.3-1.amzn2023.0.1.x86_64                   7/7 
-out:   Verifying        : generic-logos-httpd-18.0.0-12.amzn2023.0.3.noarch      1/7 
-out:   Verifying        : gperftools-libs-2.9.1-1.amzn2023.0.3.x86_64            2/7 
-out:   Verifying        : libunwind-1.4.0-5.amzn2023.0.2.x86_64                  3/7 
-out:   Verifying        : nginx-1:1.26.3-1.amzn2023.0.1.x86_64                   4/7 
-out:   Verifying        : nginx-core-1:1.26.3-1.amzn2023.0.1.x86_64              5/7 
-out:   Verifying        : nginx-filesystem-1:1.26.3-1.amzn2023.0.1.noarch        6/7 
-out:   Verifying        : nginx-mimetypes-2.1.49-3.amzn2023.0.3.noarch           7/7 
-out: Installed:
-out:   generic-logos-httpd-18.0.0-12.amzn2023.0.3.noarch                             
-out:   gperftools-libs-2.9.1-1.amzn2023.0.3.x86_64                                   
-out:   libunwind-1.4.0-5.amzn2023.0.2.x86_64                                         
-out:   nginx-1:1.26.3-1.amzn2023.0.1.x86_64                                          
-out:   nginx-core-1:1.26.3-1.amzn2023.0.1.x86_64                                     
-out:   nginx-filesystem-1:1.26.3-1.amzn2023.0.1.noarch                               
-out:   nginx-mimetypes-2.1.49-3.amzn2023.0.3.noarch                                  
-out: Complete!
-out: Last metadata expiration check: 0:19:12 ago on Thu May 15 23:15:58 2025.
-out: No match for argument: epel-release
-err: Error: Unable to find a match: epel-release
-out: Last metadata expiration check: 0:19:13 ago on Thu May 15 23:15:58 2025.
-out: Dependencies resolved.
-out: ================================================================================
-out:  Package                 Arch    Version                     Repository    Size
-out: ================================================================================
-out: Installing:
-out:  certbot                 noarch  2.6.0-4.amzn2023.0.1        amazonlinux   49 k
-out:  python3-certbot-nginx   noarch  2.6.0-4.amzn2023.0.1        amazonlinux  158 k
-out: Installing dependencies:
-out:  fontawesome-fonts       noarch  1:4.7.0-11.amzn2023.0.2     amazonlinux  205 k
-out:  fonts-filesystem        noarch  1:2.0.5-12.amzn2023.0.2     amazonlinux  9.5 k
-out:  python3-acme            noarch  2.6.0-4.amzn2023.0.1        amazonlinux  161 k
-out:  python3-certbot         noarch  2.6.0-4.amzn2023.0.1        amazonlinux  677 k
-out:  python3-configargparse  noarch  1.7-1.amzn2023              amazonlinux   45 k
-out:  python3-josepy          noarch  1.13.0-6.amzn2023           amazonlinux   61 k
-out:  python3-parsedatetime   noarch  2.6-10.amzn2023             amazonlinux   80 k
-out:  python3-pyOpenSSL       noarch  21.0.0-1.amzn2023.0.2       amazonlinux   92 k
-out:  python3-pyparsing       noarch  2.4.7-6.amzn2023.0.2        amazonlinux  152 k
-out:  python3-pyrfc3339       noarch  1.1-16.amzn2023             amazonlinux   19 k
-out: Installing weak dependencies:
-out:  python-josepy-doc       noarch  1.13.0-6.amzn2023           amazonlinux   20 k
-out: Transaction Summary
-out: ================================================================================
-out: Install  13 Packages
-out: Total download size: 1.7 M
-out: Installed size: 7.8 M
-out: Downloading Packages:
-out: (1/13): fonts-filesystem-2.0.5-12.amzn2023.0.2. 271 kB/s | 9.5 kB     00:00    
-out: (2/13): certbot-2.6.0-4.amzn2023.0.1.noarch.rpm 1.1 MB/s |  49 kB     00:00    
-out: (3/13): python-josepy-doc-1.13.0-6.amzn2023.noa 806 kB/s |  20 kB     00:00    
-out: (4/13): fontawesome-fonts-4.7.0-11.amzn2023.0.2 2.3 MB/s | 205 kB     00:00    
-out: (5/13): python3-acme-2.6.0-4.amzn2023.0.1.noarc 2.2 MB/s | 161 kB     00:00    
-out: (6/13): python3-certbot-2.6.0-4.amzn2023.0.1.no 9.2 MB/s | 677 kB     00:00    
-out: (7/13): python3-configargparse-1.7-1.amzn2023.n 1.4 MB/s |  45 kB     00:00    
-out: (8/13): python3-josepy-1.13.0-6.amzn2023.noarch 1.6 MB/s |  61 kB     00:00    
-out: (9/13): python3-certbot-nginx-2.6.0-4.amzn2023. 1.8 MB/s | 158 kB     00:00    
-out: (10/13): python3-pyparsing-2.4.7-6.amzn2023.0.2 4.8 MB/s | 152 kB     00:00    
-out: (11/13): python3-parsedatetime-2.6-10.amzn2023. 1.0 MB/s |  80 kB     00:00    
-out: (12/13): python3-pyrfc3339-1.1-16.amzn2023.noar 709 kB/s |  19 kB     00:00    
-out: (13/13): python3-pyOpenSSL-21.0.0-1.amzn2023.0. 1.3 MB/s |  92 kB     00:00    
-out: --------------------------------------------------------------------------------
-out: Total                                           6.0 MB/s | 1.7 MB     00:00     
-out: Running transaction check
-out: Transaction check succeeded.
-out: Running transaction test
-out: Transaction test succeeded.
-out: Running transaction
-out:   Preparing        :                                                        1/1 
-out:   Installing       : python3-pyOpenSSL-21.0.0-1.amzn2023.0.2.noarch        1/13 
-out:   Installing       : python3-pyrfc3339-1.1-16.amzn2023.noarch              2/13 
-out:   Installing       : python3-pyparsing-2.4.7-6.amzn2023.0.2.noarch         3/13 
-out:   Installing       : python3-parsedatetime-2.6-10.amzn2023.noarch          4/13 
-out:   Installing       : python3-configargparse-1.7-1.amzn2023.noarch          5/13 
-out:   Installing       : python-josepy-doc-1.13.0-6.amzn2023.noarch            6/13 
-out:   Installing       : python3-josepy-1.13.0-6.amzn2023.noarch               7/13 
-out:   Installing       : python3-acme-2.6.0-4.amzn2023.0.1.noarch              8/13 
-out:   Installing       : python3-certbot-2.6.0-4.amzn2023.0.1.noarch           9/13 
-out:   Installing       : fonts-filesystem-1:2.0.5-12.amzn2023.0.2.noarch      10/13 
-out:   Installing       : fontawesome-fonts-1:4.7.0-11.amzn2023.0.2.noarch     11/13 
-out:   Installing       : certbot-2.6.0-4.amzn2023.0.1.noarch                  12/13 
-out:   Running scriptlet: certbot-2.6.0-4.amzn2023.0.1.noarch                  12/13 
-out: Certbot auto renewal timer is not started by default.
-out: Run 'systemctl start certbot-renew.timer' to enable automatic renewals.
-out:   Installing       : python3-certbot-nginx-2.6.0-4.amzn2023.0.1.noarch    13/13 
-out:   Running scriptlet: python3-certbot-nginx-2.6.0-4.amzn2023.0.1.noarch    13/13 
-out:   Verifying        : certbot-2.6.0-4.amzn2023.0.1.noarch                   1/13 
-out:   Verifying        : fontawesome-fonts-1:4.7.0-11.amzn2023.0.2.noarch      2/13 
-out:   Verifying        : fonts-filesystem-1:2.0.5-12.amzn2023.0.2.noarch       3/13 
-out:   Verifying        : python-josepy-doc-1.13.0-6.amzn2023.noarch            4/13 
-out:   Verifying        : python3-acme-2.6.0-4.amzn2023.0.1.noarch              5/13 
-out:   Verifying        : python3-certbot-2.6.0-4.amzn2023.0.1.noarch           6/13 
-out:   Verifying        : python3-certbot-nginx-2.6.0-4.amzn2023.0.1.noarch     7/13 
-out:   Verifying        : python3-configargparse-1.7-1.amzn2023.noarch          8/13 
-out:   Verifying        : python3-josepy-1.13.0-6.amzn2023.noarch               9/13 
-out:   Verifying        : python3-parsedatetime-2.6-10.amzn2023.noarch         10/13 
-out:   Verifying        : python3-pyOpenSSL-21.0.0-1.amzn2023.0.2.noarch       11/13 
-out:   Verifying        : python3-pyparsing-2.4.7-6.amzn2023.0.2.noarch        12/13 
-out:   Verifying        : python3-pyrfc3339-1.1-16.amzn2023.noarch             13/13 
-out: Installed:
-out:   certbot-2.6.0-4.amzn2023.0.1.noarch                                           
-out:   fontawesome-fonts-1:4.7.0-11.amzn2023.0.2.noarch                              
-out:   fonts-filesystem-1:2.0.5-12.amzn2023.0.2.noarch                               
-out:   python-josepy-doc-1.13.0-6.amzn2023.noarch                                    
-out:   python3-acme-2.6.0-4.amzn2023.0.1.noarch                                      
-out:   python3-certbot-2.6.0-4.amzn2023.0.1.noarch                                   
-out:   python3-certbot-nginx-2.6.0-4.amzn2023.0.1.noarch                             
-out:   python3-configargparse-1.7-1.amzn2023.noarch                                  
-out:   python3-josepy-1.13.0-6.amzn2023.noarch                                       
-out:   python3-parsedatetime-2.6-10.amzn2023.noarch                                  
-out:   python3-pyOpenSSL-21.0.0-1.amzn2023.0.2.noarch                                
-out:   python3-pyparsing-2.4.7-6.amzn2023.0.2.noarch                                 
-out:   python3-pyrfc3339-1.1-16.amzn2023.noarch                                      
-out: Complete!
-err: Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /usr/lib/systemd/system/nginx.service.
-err: Saving debug log to /var/log/letsencrypt/letsencrypt.log
-out: Account registered.
-out: Requesting a certificate for ***
-err: An unexpected error occurred:
-err: Error creating new order :: Cannot issue for "***": The ACME server refuses to issue a certificate for this domain name, because it is forbidden by policy
-err: Ask for help or search for solutions at https://community.letsencrypt.org. See the logfile /var/log/letsencrypt/letsencrypt.log or re-run Certbot with -v for more details.
-2025/05/15 23:35:17 Process exited with status 1
-
----
-# Configure Nginx for HTTP Without HTTPS
-
-ok lets configure nginx without https and I will open the 80 port in EC2 for HTTP
-
----
-# Fix Nginx Hash Bucket Size Error
-
-now the error is:
-
-Run appleboy/ssh-action@v1.0.3
-/usr/bin/docker run --name b20e2a8c610eb6046d18594c718e97ee6ff_4e592b --label 899b20 --workdir /github/workspace --rm -e "INPUT_HOST" -e "INPUT_USERNAME" -e "INPUT_KEY" -e "INPUT_SCRIPT" -e "INPUT_PORT" -e "INPUT_PASSPHRASE" -e "INPUT_PASSWORD" -e "INPUT_SYNC" -e "INPUT_USE_INSECURE_CIPHER" -e "INPUT_CIPHER" -e "INPUT_TIMEOUT" -e "INPUT_COMMAND_TIMEOUT" -e "INPUT_KEY_PATH" -e "INPUT_FINGERPRINT" -e "INPUT_PROXY_HOST" -e "INPUT_PROXY_PORT" -e "INPUT_PROXY_USERNAME" -e "INPUT_PROXY_PASSWORD" -e "INPUT_PROXY_PASSPHRASE" -e "INPUT_PROXY_TIMEOUT" -e "INPUT_PROXY_KEY" -e "INPUT_PROXY_KEY_PATH" -e "INPUT_PROXY_FINGERPRINT" -e "INPUT_PROXY_CIPHER" -e "INPUT_PROXY_USE_INSECURE_CIPHER" -e "INPUT_SCRIPT_STOP" -e "INPUT_ENVS" -e "INPUT_ENVS_FORMAT" -e "INPUT_DEBUG" -e "INPUT_ALLENVS" -e "INPUT_REQUEST_PTY" -e "HOME" -e "GITHUB_JOB" -e "GITHUB_REF" -e "GITHUB_SHA" -e "GITHUB_REPOSITORY" -e "GITHUB_REPOSITORY_OWNER" -e "GITHUB_REPOSITORY_OWNER_ID" -e "GITHUB_RUN_ID" -e "GITHUB_RUN_NUMBER" -e "GITHUB_RETENTION_DAYS" -e "GITHUB_RUN_ATTEMPT" -e "GITHUB_ACTOR_ID" -e "GITHUB_ACTOR" -e "GITHUB_WORKFLOW" -e "GITHUB_HEAD_REF" -e "GITHUB_BASE_REF" -e "GITHUB_EVENT_NAME" -e "GITHUB_SERVER_URL" -e "GITHUB_API_URL" -e "GITHUB_GRAPHQL_URL" -e "GITHUB_REF_NAME" -e "GITHUB_REF_PROTECTED" -e "GITHUB_REF_TYPE" -e "GITHUB_WORKFLOW_REF" -e "GITHUB_WORKFLOW_SHA" -e "GITHUB_REPOSITORY_ID" -e "GITHUB_TRIGGERING_ACTOR" -e "GITHUB_WORKSPACE" -e "GITHUB_ACTION" -e "GITHUB_EVENT_PATH" -e "GITHUB_ACTION_REPOSITORY" -e "GITHUB_ACTION_REF" -e "GITHUB_PATH" -e "GITHUB_ENV" -e "GITHUB_STEP_SUMMARY" -e "GITHUB_STATE" -e "GITHUB_OUTPUT" -e "RUNNER_OS" -e "RUNNER_ARCH" -e "RUNNER_NAME" -e "RUNNER_ENVIRONMENT" -e "RUNNER_TOOL_CACHE" -e "RUNNER_TEMP" -e "RUNNER_WORKSPACE" -e "ACTIONS_RUNTIME_URL" -e "ACTIONS_RUNTIME_TOKEN" -e "ACTIONS_CACHE_URL" -e "ACTIONS_RESULTS_URL" -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" -v "/home/runner/work/AI4Devs-pipeline/AI4Devs-pipeline":"/github/workspace" 899b20:e2a8c610eb6046d18594c718e97ee6ff
-======CMD======
-if [ -f /etc/debian_version ]; then
-  # Debian/Ubuntu
-  sudo apt-get update
-  sudo apt-get install -y nginx
-  sudo systemctl enable nginx
-  sudo systemctl start nginx
-elif [ -f /etc/redhat-release ] || [ -f /etc/system-release ]; then
-  # Amazon Linux/RedHat/CentOS
-  sudo yum update -y
-  sudo yum install -y nginx
-  sudo systemctl enable nginx
-  sudo systemctl start nginx
-else
-  echo "Unsupported OS. Please install Nginx manually."
-  exit 1
-fi
-
-# Create Nginx configuration for HTTP
-cat << 'EOF' | sudo tee /etc/nginx/conf.d/backend.conf
-server {
-  listen 80;
-  server_name ***;
-  
-  location / {
-    proxy_pass http://localhost:3000;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_set_header Host $host;
-    proxy_cache_bypass $http_upgrade;
-  }
-}
-EOF
-
-# Remove default config if needed
-if [ -f /etc/nginx/sites-enabled/default ]; then
-  sudo rm /etc/nginx/sites-enabled/default
-fi
-
-# Test and reload Nginx configuration
-sudo nginx -t && sudo systemctl reload nginx
-
-======END======
-out: Last metadata expiration check: 0:25:29 ago on Thu May 15 23:15:58 2025.
-out: Dependencies resolved.
-out: Nothing to do.
-out: Complete!
-out: Last metadata expiration check: 0:25:31 ago on Thu May 15 23:15:58 2025.
 out: Package nginx-1:1.26.3-1.amzn2023.0.1.x86_64 is already installed.
 out: Dependencies resolved.
 out: Nothing to do.
@@ -621,3 +395,172 @@ the workflow is running but I am getting a 502 Bad Gateway error when accesing t
 # Still Having 502 Bad Gateway Issue
 
 still experiencing the bad gateway issue
+
+---
+# Debug Output Shows Missing Environment File and Prisma Issues
+
+here is the debug:
+
+/usr/bin/docker run --name f34752eec00928f39d43a18f78fb034799c55a_6ff0d6 --label f34752 --workdir /github/workspace --rm -e "INPUT_HOST" -e "INPUT_USERNAME" -e "INPUT_KEY" -e "INPUT_SCRIPT" -e "INPUT_PORT" -e "INPUT_PASSPHRASE" -e "INPUT_PASSWORD" -e "INPUT_SYNC" -e "INPUT_USE_INSECURE_CIPHER" -e "INPUT_CIPHER" -e "INPUT_TIMEOUT" -e "INPUT_COMMAND_TIMEOUT" -e "INPUT_KEY_PATH" -e "INPUT_FINGERPRINT" -e "INPUT_PROXY_HOST" -e "INPUT_PROXY_PORT" -e "INPUT_PROXY_USERNAME" -e "INPUT_PROXY_PASSWORD" -e "INPUT_PROXY_PASSPHRASE" -e "INPUT_PROXY_TIMEOUT" -e "INPUT_PROXY_KEY" -e "INPUT_PROXY_KEY_PATH" -e "INPUT_PROXY_FINGERPRINT" -e "INPUT_PROXY_CIPHER" -e "INPUT_PROXY_USE_INSECURE_CIPHER" -e "INPUT_SCRIPT_STOP" -e "INPUT_ENVS" -e "INPUT_ENVS_FORMAT" -e "INPUT_DEBUG" -e "INPUT_ALLENVS" -e "INPUT_REQUEST_PTY" -e "HOME" -e "GITHUB_JOB" -e "GITHUB_REF" -e "GITHUB_SHA" -e "GITHUB_REPOSITORY" -e "GITHUB_REPOSITORY_OWNER" -e "GITHUB_REPOSITORY_OWNER_ID" -e "GITHUB_RUN_ID" -e "GITHUB_RUN_NUMBER" -e "GITHUB_RETENTION_DAYS" -e "GITHUB_RUN_ATTEMPT" -e "GITHUB_ACTOR_ID" -e "GITHUB_ACTOR" -e "GITHUB_WORKFLOW" -e "GITHUB_HEAD_REF" -e "GITHUB_BASE_REF" -e "GITHUB_EVENT_NAME" -e "GITHUB_SERVER_URL" -e "GITHUB_API_URL" -e "GITHUB_GRAPHQL_URL" -e "GITHUB_REF_NAME" -e "GITHUB_REF_PROTECTED" -e "GITHUB_REF_TYPE" -e "GITHUB_WORKFLOW_REF" -e "GITHUB_WORKFLOW_SHA" -e "GITHUB_REPOSITORY_ID" -e "GITHUB_TRIGGERING_ACTOR" -e "GITHUB_WORKSPACE" -e "GITHUB_ACTION" -e "GITHUB_EVENT_PATH" -e "GITHUB_ACTION_REPOSITORY" -e "GITHUB_ACTION_REF" -e "GITHUB_PATH" -e "GITHUB_ENV" -e "GITHUB_STEP_SUMMARY" -e "GITHUB_STATE" -e "GITHUB_OUTPUT" -e "RUNNER_OS" -e "RUNNER_ARCH" -e "RUNNER_NAME" -e "RUNNER_ENVIRONMENT" -e "RUNNER_TOOL_CACHE" -e "RUNNER_TEMP" -e "RUNNER_WORKSPACE" -e "ACTIONS_RUNTIME_URL" -e "ACTIONS_RUNTIME_TOKEN" -e "ACTIONS_CACHE_URL" -e "ACTIONS_RESULTS_URL" -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" -v "/home/runner/work/AI4Devs-pipeline/AI4Devs-pipeline":"/github/workspace" f34752:eec00928f39d43a18f78fb034799c55a
+======CMD======
+# Check if the backend process is running
+echo "==== PM2 Status ===="
+pm2 status
+
+# Check if port 3010 is being listened to
+echo "==== Port 3010 Status ===="
+sudo netstat -tulpn | grep 3010 || echo "Port 3010 is not being listened to"
+
+# Check Nginx error logs
+echo "==== Nginx Error Logs ===="
+sudo tail -n 50 /var/log/nginx/error.log
+
+# Check Nginx access logs
+echo "==== Nginx Access Logs ===="
+sudo tail -n 20 /var/log/nginx/access.log
+
+# Try to restart the backend service
+echo "==== Restarting Backend Service ===="
+cd ***/backend-artifact
+ls -la
+cat package.json
+ls -la dist/
+echo "==== Environment Variables ===="
+grep -v "^\s*#" .env || echo "No .env file found"
+
+# Restart PM2 service with explicit path
+pm2 delete backend || echo "No backend service found to delete"
+NODE_ENV=production pm2 start dist/index.js --name backend
+
+# Check if the service started successfully
+pm2 status
+
+======END======
+out: ==== PM2 Status ====
+out: ┌────┬────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+out: │ id │ name       │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+out: ├────┼────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+out: │ 0  │ backend    │ default     │ 1.0.0   │ fork    │ 0        │ 0      │ 90   │ errored   │ 0%       │ 0b       │ *** │ disabled │
+out: └────┴────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+out: ==== Port 3010 Status ====
+out: Port 3010 is not being listened to
+out: ==== Nginx Error Logs ====
+Notice: 5/05/15 23:45:11 [notice] 31793#31793: exit
+Notice: 5/05/15 23:45:11 [notice] 31791#31791: signal 17 (SIGCHLD) received from 31793
+Notice: 5/05/15 23:45:11 [notice] 31791#31791: worker process 31793 exited with code 0
+Notice: 5/05/15 23:45:11 [notice] 31791#31791: signal 29 (SIGIO) received
+Notice: 5/05/15 23:45:11 [notice] 31791#31791: signal 17 (SIGCHLD) received from 31792
+Notice: 5/05/15 23:45:11 [notice] 31791#31791: worker process 31792 exited with code 0
+Notice: 5/05/15 23:45:11 [notice] 31791#31791: signal 29 (SIGIO) received
+Error: 25/05/15 23:45:34 [error] 33019#33019: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 79.117.195.217, server: ***, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "***"
+Error: 25/05/15 23:46:07 [error] 33019#33019: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 79.117.195.217, server: ***, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/", host: "***"
+Notice: 5/05/15 23:51:53 [notice] 33697#33697: signal process started
+Notice: 5/05/15 23:51:53 [notice] 31791#31791: signal 1 (SIGHUP) received from 33697, reconfiguring
+Notice: 5/05/15 23:51:53 [notice] 31791#31791: reconfiguring
+Notice: 5/05/15 23:51:53 [notice] 31791#31791: using the "epoll" event method
+Notice: 5/05/15 23:51:53 [notice] 31791#31791: start worker processes
+Notice: 5/05/15 23:51:53 [notice] 31791#31791: start worker process 33698
+Notice: 5/05/15 23:51:53 [notice] 31791#31791: start worker process 33699
+Notice: 5/05/15 23:51:53 [notice] 33020#33020: gracefully shutting down
+Notice: 5/05/15 23:51:53 [notice] 33019#33019: gracefully shutting down
+Notice: 5/05/15 23:51:53 [notice] 33020#33020: exiting
+Notice: 5/05/15 23:51:53 [notice] 33019#33019: exiting
+Notice: 5/05/15 23:51:53 [notice] 33020#33020: exit
+Notice: 5/05/15 23:51:53 [notice] 33019#33019: exit
+Notice: 5/05/15 23:51:54 [notice] 31791#31791: signal 17 (SIGCHLD) received from 33019
+Notice: 5/05/15 23:51:54 [notice] 31791#31791: worker process 33019 exited with code 0
+Notice: 5/05/15 23:51:54 [notice] 31791#31791: signal 29 (SIGIO) received
+Notice: 5/05/15 23:51:54 [notice] 31791#31791: signal 17 (SIGCHLD) received from 33020
+Notice: 5/05/15 23:51:54 [notice] 31791#31791: worker process 33020 exited with code 0
+Notice: 5/05/15 23:51:54 [notice] 31791#31791: signal 29 (SIGIO) received
+out: ==== Nginx Access Logs ====
+out: 79.117.195.217 - - [15/May/2025:23:38:16 +0000] "GET / HTTP/1.1" 200 615 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" "-"
+out: 79.117.195.217 - - [15/May/2025:23:38:16 +0000] "GET /favicon.ico HTTP/1.1" 404 3650 "http://***/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" "-"
+out: 79.117.195.217 - - [15/May/2025:23:45:34 +0000] "GET / HTTP/1.1" 502 559 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" "-"
+out: 79.117.195.217 - - [15/May/2025:23:46:07 +0000] "GET / HTTP/1.1" 502 559 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" "-"
+out: 79.117.195.217 - - [15/May/2025:23:52:34 +0000] "GET / HTTP/1.1" 502 559 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" "-"
+out: 79.117.195.217 - - [15/May/2025:23:52:36 +0000] "GET / HTTP/1.1" 502 559 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" "-"
+out: 79.117.195.217 - - [15/May/2025:23:52:43 +0000] "GET / HTTP/1.1" 502 559 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" "-"
+out: ==== Restarting Backend Service ====
+err: grep: .env: No such file or directory
+out: total 276
+out: drwxrwxr-x.   4 *** ***     83 May 15 23:54 .
+out: drwxrwxr-x.   4 *** ***     70 May 15 23:20 ..
+out: drwxr-xr-x.   6 *** ***     89 May 15 23:54 dist
+out: drwxrwxr-x. 128 *** ***  16384 May 15 23:55 node_modules
+out: -rw-r--r--.   1 *** *** 260688 May 15 23:55 package-lock.json
+out: -rw-r--r--.   1 *** ***   1280 May 15 23:54 package.json
+out: {
+out:     "name": "backend",
+out:     "version": "1.0.0",
+out:     "description": "",
+out:     "main": "dist/index.js",
+out:     "scripts": {
+out:         "start": "node dist/index.js",
+out:         "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+out:         "build": "tsc",
+out:         "test": "jest",
+out:         "prisma:init": "npx prisma init",
+out:         "prisma:generate": "npx prisma generate",
+out:         "start:prod": "npm run build && npm start"
+out:     },
+out:     "keywords": [],
+out:     "author": "",
+out:     "license": "ISC",
+out:     "dependencies": {
+out:         "@prisma/client": "^5.13.0",
+out:         "cors": "^2.8.5",
+out:         "dotenv": "^16.4.5",
+out:         "express": "^4.19.2",
+out:         "multer": "^1.4.5-lts.1",
+out:         "swagger-jsdoc": "^6.2.8",
+out:         "swagger-ui-express": "^5.0.0"
+out:     },
+out:     "devDependencies": {
+out:         "@types/cors": "^2.8.17",
+out:         "@types/express": "^4.17.9",
+out:         "@types/jest": "^29.5.12",
+out:         "@types/multer": "^1.4.11",
+out:         "@types/node": "^20.12.12",
+out:         "eslint": "^9.2.0",
+out:         "eslint-config-prettier": "^9.1.0",
+out:         "eslint-plugin-prettier": "^5.1.3",
+out:         "jest": "^29.7.0",
+out:         "prettier": "^3.2.5",
+out:         "prisma": "^5.13.0",
+out:         "ts-jest": "^29.1.2",
+out:         "ts-node": "^9.1.1",
+out:         "ts-node-dev": "^1.1.6",
+out:         "typescript": "^4.9.5"
+out:     }
+out: }
+out: total 4
+out: drwxr-xr-x. 6 *** ***   89 May 15 23:54 .
+out: drwxrwxr-x. 4 *** ***   83 May 15 23:54 ..
+out: drwxr-xr-x. 3 *** ***   42 May 15 23:54 application
+out: drwxr-xr-x. 3 *** ***   20 May 15 23:54 domain
+out: -rw-r--r--. 1 *** *** 2036 May 15 23:54 index.js
+out: drwxr-xr-x. 3 *** ***   25 May 15 23:54 presentation
+out: drwxr-xr-x. 2 *** ***   57 May 15 23:54 routes
+out: ==== Environment Variables ====
+out: No .env file found
+out: [PM2] Applying action deleteProcessId on app [backend](ids: [ 0 ])
+out: [PM2] [backend](0) ✓
+out: ┌────┬───────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+out: │ id │ name      │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+out: └────┴───────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+out: [PM2] Starting ***/backend-artifact/dist/index.js in fork_mode (1 instance)
+out: [PM2] Done.
+out: ┌────┬────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+out: │ id │ name       │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+out: ├────┼────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+out: │ 0  │ backend    │ default     │ 1.0.0   │ fork    │ 34302    │ 0s     │ 0    │ online    │ 0%       │ 16.5mb   │ *** │ disabled │
+out: └────┴────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+out: ┌────┬────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+out: │ id │ name       │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+out: ├────┼────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+out: │ 0  │ backend    │ default     │ 1.0.0   │ fork    │ 34302    │ 0s     │ 0    │ online    │ 0%       │ 48.7mb   │ *** │ disabled │
+out: └────┴────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+==============================================
+✅ Successfully executed commands to all host.
+==============================================
