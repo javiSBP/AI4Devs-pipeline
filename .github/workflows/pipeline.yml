@@ -66,18 +66,7 @@ jobs:
         with:
           name: backend-artifact
           path: backend-artifact
-      - name: Verify EC2 connectivity
-        run: |
-          echo "Attempting to verify EC2 connectivity..."
-          for i in {1..5}; do
-            echo "Attempt $i: Testing connection to ${{ secrets.HOST_DNS }}..."
-            timeout 10 nc -zv ${{ secrets.HOST_DNS }} 22 && echo "Connection successful!" && exit 0
-            echo "Connection failed. Waiting 30 seconds before retry..."
-            sleep 30
-          done
-          echo "Failed to connect after 5 attempts. Please check your EC2 instance and security groups."
-          exit 1
-      - name: Copy files to EC2 with retry
+      - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST_DNS }}
@@ -87,28 +76,19 @@ jobs:
           target: ${{ secrets.TARGET_DIR }}
           timeout: 120s
           command_timeout: 20m
-          strip_components: 0
           overwrite: true
-      - name: List files in target dir
+      - name: Setup and start backend
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST_DNS }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            ls -l ${{ secrets.TARGET_DIR }}
-            ls -l ${{ secrets.TARGET_DIR }}/backend-artifact
-            ls -l ${{ secrets.TARGET_DIR }}/backend-artifact/dist
-          timeout: 60s
-          command_timeout: 5m
-      - name: Restart backend service on EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          timeout: 180s
+          command_timeout: 20m
           script: |
             export PATH=$PATH:/usr/local/bin:/usr/bin:/bin
+            
+            # Install Node.js if not present
             if ! command -v npm &> /dev/null; then
               if [ -f /etc/debian_version ]; then
                 # Debian/Ubuntu
@@ -120,32 +100,24 @@ jobs:
                 sudo yum install -y nodejs
               fi
             fi
+            
+            # Install PM2
             sudo npm install -g pm2
+            
+            # Navigate to app directory
             cd ${{ secrets.TARGET_DIR }}/backend-artifact
             
-            # Create a minimal .env file for Prisma
+            # Create environment file
             cat << 'EOF' > .env
-            # Database connection
             DATABASE_URL="file:./dev.db"
-            # Port configuration - force port 3010
             PORT=3010
             EOF
             
-            # Make sure prisma directory exists and has proper permissions
+            # Setup Prisma
             mkdir -p prisma
-            ls -la prisma
             
-            # Install dependencies
-            npm install --production
-            
-            # Generate Prisma client with proper error handling
-            echo "Generating Prisma client..."
-            if npx prisma generate; then
-              echo "Prisma client generated successfully."
-            else
-              echo "Failed to generate Prisma client. Creating minimal schema.prisma file..."
-              # Create a minimal schema.prisma if not present
-              mkdir -p prisma
+            # Ensure schema.prisma exists
+            if [ ! -f "prisma/schema.prisma" ]; then
               cat << 'EOF' > prisma/schema.prisma
             generator client {
               provider = "prisma-client-js"
@@ -156,165 +128,20 @@ jobs:
               url      = env("DATABASE_URL")
             }
             EOF
-              # Try to generate Prisma client again
-              npx prisma generate
             fi
             
-            # Ensure SQLite DB exists
+            # Install dependencies
+            npm install --production
+            
+            # Generate Prisma client
+            npx prisma generate
             npx prisma db push --accept-data-loss
             
-            # Stop any existing instances and start with the correct port
+            # Start application
             pm2 delete backend || true
-            
-            # Check if the application starts correctly
-            echo "Starting application with explicit environment variables..."
             PORT=3010 DATABASE_URL="file:./dev.db" pm2 start dist/index.js --name backend
-          timeout: 180s
-          command_timeout: 20m
-      - name: Install and Configure Nginx for HTTP
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            if [ -f /etc/debian_version ]; then
-              # Debian/Ubuntu
-              sudo apt-get update
-              sudo apt-get install -y nginx
-              sudo systemctl enable nginx
-              sudo systemctl start nginx
-            elif [ -f /etc/redhat-release ] || [ -f /etc/system-release ]; then
-              # Amazon Linux/RedHat/CentOS
-              sudo yum update -y
-              sudo yum install -y nginx
-              sudo systemctl enable nginx
-              sudo systemctl start nginx
-            else
-              echo "Unsupported OS. Please install Nginx manually."
-              exit 1
-            fi
             
-            # Increase server_names_hash_bucket_size to handle long domain names
-            sudo bash -c 'cat << EOF > /etc/nginx/conf.d/server_names_hash.conf
-            # Increase hash bucket size to handle long domain names
-            server_names_hash_bucket_size 128;
-            EOF'
-            
-            # Create Nginx configuration for HTTP
-            cat << 'EOF' | sudo tee /etc/nginx/conf.d/backend.conf
-            server {
-              listen 80;
-              server_name ${{ secrets.HOST_DNS }};
-              
-              # More detailed logging for troubleshooting
-              error_log /var/log/nginx/backend_error.log debug;
-              access_log /var/log/nginx/backend_access.log;
-              
-              location / {
-                proxy_pass http://localhost:3010;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection 'upgrade';
-                proxy_set_header Host $host;
-                proxy_cache_bypass $http_upgrade;
-                proxy_read_timeout 300s;
-                proxy_connect_timeout 75s;
-              }
-            }
-            EOF
-            
-            # Remove default config if needed
-            if [ -f /etc/nginx/sites-enabled/default ]; then
-              sudo rm /etc/nginx/sites-enabled/default
-            fi
-            
-            # Test and reload Nginx configuration
-            sudo nginx -t && sudo systemctl reload nginx
-          timeout: 180s
-          command_timeout: 10m
-      - name: Debug Backend Service
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            # Check if the backend process is running
-            echo "==== PM2 Status ===="
-            pm2 status
-            
-            # Check if port 3010 is being listened to
-            echo "==== Port 3010 Status ===="
-            sudo netstat -tulpn | grep 3010 || echo "Port 3010 is not being listened to"
-            
-            # Check Nginx error logs
-            echo "==== Nginx Error Logs ===="
-            sudo tail -n 50 /var/log/nginx/error.log
-            
-            # Check Nginx access logs
-            echo "==== Nginx Access Logs ===="
-            sudo tail -n 20 /var/log/nginx/access.log
-            
-            # Check directory structure
-            echo "==== Directory Structure ===="
-            cd ${{ secrets.TARGET_DIR }}/backend-artifact
-            ls -la
-            ls -la prisma/ || echo "No prisma directory"
-            ls -la node_modules/.prisma/ || echo "No .prisma directory in node_modules"
-            
-            # Check environment variables
-            echo "==== Environment Variables ===="
-            grep -v "^\s*#" .env || echo "No .env file found"
-            
-            # Check for Prisma client issues
-            echo "==== Prisma Client Status ===="
-            if [ -f "node_modules/.prisma/client/index.js" ]; then
-              echo "Prisma client exists"
-            else
-              echo "Prisma client missing - attempting to regenerate"
-              npx prisma generate
-            fi
-            
-            # Restart PM2 service with explicit environment variables
-            pm2 delete backend || echo "No backend service found to delete"
-            DATABASE_URL="file:./dev.db" PORT=3010 pm2 start dist/index.js --name backend
-            
-            # Check if the service started successfully
-            pm2 status
-          timeout: 180s
-          command_timeout: 10m
-      - name: Final debugging after setup
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            echo "==== PM2 Status and Logs ===="
-            pm2 status
-            pm2 logs --lines 20 || true
-            
-            echo "==== Check Application Port ===="
-            sudo netstat -tulpn | grep 3010 || echo "Port 3010 is still not listening"
-            
-            echo "==== Check Nginx Configuration ===="
-            sudo nginx -t
-            
-            echo "==== Check Nginx Service Status ===="
-            sudo systemctl status nginx --no-pager
-            
-            echo "==== Test Local Connection to Backend ===="
-            curl -v http://localhost:3010/ || echo "Could not connect to backend locally"
-            
-            echo "==== Check .env File ===="
-            cd ${{ secrets.TARGET_DIR }}/backend-artifact
-            cat .env
-            
-            echo "==== Create Simple index.js for Testing ===="
-            cd ${{ secrets.TARGET_DIR }}/backend-artifact
-            
-            # Create a simple Express server as fallback if Prisma issues persist
+            # Create fallback server if needed
             cat << 'EOF' > simple-server.js
             const express = require('express');
             const app = express();
@@ -329,13 +156,63 @@ jobs:
             });
             EOF
             
-            # Try running the simple server if main app fails
-            pm2 status backend
-            if [ $? -ne 0 ]; then
-              echo "Main backend app failed, starting simple server"
+            # Check backend status
+            if ! pm2 show backend | grep -q "online"; then
+              echo "Main backend failed, starting simple server"
               pm2 start simple-server.js --name backend-simple
             fi
+      - name: Configure Nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           timeout: 180s
           command_timeout: 10m
+          script: |
+            # Install Nginx if not present
+            if [ -f /etc/debian_version ]; then
+              sudo apt-get update
+              sudo apt-get install -y nginx
+            elif [ -f /etc/redhat-release ] || [ -f /etc/system-release ]; then
+              sudo yum update -y
+              sudo yum install -y nginx
+            fi
+            
+            # Configure Nginx
+            sudo systemctl enable nginx
+            sudo systemctl start nginx
+            
+            # Set hash bucket size
+            sudo bash -c 'cat << EOF > /etc/nginx/conf.d/server_names_hash.conf
+            server_names_hash_bucket_size 128;
+            EOF'
+            
+            # Configure backend proxy
+            cat << 'EOF' | sudo tee /etc/nginx/conf.d/backend.conf
+            server {
+              listen 80;
+              server_name ${{ secrets.HOST_DNS }};
+              
+              location / {
+                proxy_pass http://localhost:3010;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+                proxy_read_timeout 300s;
+                proxy_connect_timeout 75s;
+              }
+            }
+            EOF
+            
+            # Remove default config if it exists
+            if [ -f /etc/nginx/sites-enabled/default ]; then
+              sudo rm /etc/nginx/sites-enabled/default
+            fi
+            
+            # Reload Nginx
+            sudo nginx -t && sudo systemctl reload nginx
       - name: Output Public URL
         run: echo "Your backend is accessible at http://${{ secrets.HOST_DNS }}"

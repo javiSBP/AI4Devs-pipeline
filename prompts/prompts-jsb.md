@@ -139,9 +139,11 @@ remember the @save-prompts.mdc
 include the lates prompt, how can I do it so you don't forget everytime? 
 
 ---
-# 15 errors in the pipeline after
+# 15 fukin' errors later
 
+...
 I have this error: copying the error from github actions, bla bla bla
+...
 
 ---
 # SSH Connection Timeout Error During File Copy
@@ -156,5 +158,10 @@ remote server os type is unix
 scp file to server.
 2025/05/16 13:53:52 error copy file to dest: ***, error message: dial tcp 16.170.220.200:22: i/o timeout
 drone-scp error: error copy file to dest: ***, error message: dial tcp 16.170.220.200:22: i/o timeout
+
+---
+# Simplify Pipeline By Removing Debug Code
+
+remove all the debug code keeping the @pipeline.yml funcionality 
 
 ---
