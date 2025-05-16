@@ -66,7 +66,18 @@ jobs:
         with:
           name: backend-artifact
           path: backend-artifact
-      - name: Copy files to EC2
+      - name: Verify EC2 connectivity
+        run: |
+          echo "Attempting to verify EC2 connectivity..."
+          for i in {1..5}; do
+            echo "Attempt $i: Testing connection to ${{ secrets.HOST_DNS }}..."
+            timeout 10 nc -zv ${{ secrets.HOST_DNS }} 22 && echo "Connection successful!" && exit 0
+            echo "Connection failed. Waiting 30 seconds before retry..."
+            sleep 30
+          done
+          echo "Failed to connect after 5 attempts. Please check your EC2 instance and security groups."
+          exit 1
+      - name: Copy files to EC2 with retry
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST_DNS }}
@@ -74,6 +85,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "backend-artifact/*"
           target: ${{ secrets.TARGET_DIR }}
+          timeout: 120s
+          command_timeout: 20m
+          strip_components: 0
+          overwrite: true
       - name: List files in target dir
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -84,6 +99,8 @@ jobs:
             ls -l ${{ secrets.TARGET_DIR }}
             ls -l ${{ secrets.TARGET_DIR }}/backend-artifact
             ls -l ${{ secrets.TARGET_DIR }}/backend-artifact/dist
+          timeout: 60s
+          command_timeout: 5m
       - name: Restart backend service on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -152,6 +169,8 @@ jobs:
             # Check if the application starts correctly
             echo "Starting application with explicit environment variables..."
             PORT=3010 DATABASE_URL="file:./dev.db" pm2 start dist/index.js --name backend
+          timeout: 180s
+          command_timeout: 20m
       - name: Install and Configure Nginx for HTTP
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -212,6 +231,8 @@ jobs:
             
             # Test and reload Nginx configuration
             sudo nginx -t && sudo systemctl reload nginx
+          timeout: 180s
+          command_timeout: 10m
       - name: Debug Backend Service
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -261,6 +282,8 @@ jobs:
             
             # Check if the service started successfully
             pm2 status
+          timeout: 180s
+          command_timeout: 10m
       - name: Final debugging after setup
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -312,5 +335,7 @@ jobs:
               echo "Main backend app failed, starting simple server"
               pm2 start simple-server.js --name backend-simple
             fi
+          timeout: 180s
+          command_timeout: 10m
       - name: Output Public URL
         run: echo "Your backend is accessible at http://${{ secrets.HOST_DNS }}"
